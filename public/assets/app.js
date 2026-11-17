@@ -82,7 +82,7 @@ $("#request-form").addEventListener("submit", async (event) => {
   const output = $("#response-output");
   const status = $("#response-status");
   if (!state.targets.includes(target)) return;
-  if (/^[a-z]+:\/\//i.test(path) || path.split("/").some(part => part === "." || part === "..") || path.includes("\\\\")) {
+  if (/^[a-z]+:\/\//i.test(path) || path.split("/").some(part => part === "." || part === "..") || path.indexOf(String.fromCharCode(92)) !== -1) {
     output.textContent = "Use a relative API path only. Full URLs and dot segments are blocked.";
     output.classList.add("error");
     status.textContent = "INVALID PATH";
