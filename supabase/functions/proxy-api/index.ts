@@ -5,7 +5,6 @@ const cors = {
   "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
   "Content-Type": "application/json",
 };
-
 const reply = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), { status, headers: cors });
 
@@ -38,19 +37,17 @@ function isLimited(req: Request) {
   entry.count += 1;
   return entry.count > 30;
 }
-
 function safePath(value: unknown): string[] | null {
-  if (typeof value !== "string" || value.length > 500 || value.startsWith("//") || value.includes("\\\\")) return null;
-  const path = value.replace(/^\\/+/, "");
+  if (typeof value !== "string" || value.length > 500 || value.startsWith("//") || value.includes("\\")) return null;
+  const path = value.startsWith("/") ? value.slice(1) : value;
   if (!path) return [];
   const parts = path.split("/");
-  if (parts.some((part) => !part || part === "." || part === ".." || /[\\u0000-\\u001f]/.test(part))) return null;
+  if (parts.some((part) => !part || part === "." || part === ".." || [...part].some((c) => c.charCodeAt(0) < 32))) return null;
   return parts;
 }
 
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: cors });
-
   const url = new URL(req.url);
   if (req.method === "GET" && url.pathname.endsWith("/health")) {
     return reply({ ok: true, service: "proxy-api", mode: "allowlisted-read-only", configuredTargets: Object.keys(targets).length });
@@ -68,7 +65,6 @@ Deno.serve(async (req: Request) => {
     const targetName = String(body.target || "");
     const base = targets[targetName];
     if (!base) return reply({ error: "Unknown configured service." }, 404);
-
     const parts = safePath(body.path ?? "");
     if (!parts) return reply({ error: "Enter a safe relative path. Absolute URLs and dot segments are not allowed." }, 400);
 
@@ -94,16 +90,14 @@ Deno.serve(async (req: Request) => {
     if (upstreamResponse.status >= 300 && upstreamResponse.status < 400) {
       return reply({ error: "Redirects from upstream services are not followed." }, 502);
     }
-
     const contentType = upstreamResponse.headers.get("content-type") || "application/octet-stream";
-    if (!/application\\/(?:[a-z0-9.+-]+\\+)?json|text\\/plain/i.test(contentType)) {
+    if (!contentType.toLowerCase().includes("json") && !contentType.toLowerCase().startsWith("text/plain")) {
       return reply({ error: "This gateway only returns JSON or plain-text API responses." }, 415);
     }
     const raw = await upstreamResponse.text();
     if (raw.length > 500_000) return reply({ error: "Upstream response is too large (500 KB limit)." }, 413);
-
     let data: unknown = raw;
-    if (/json/i.test(contentType)) {
+    if (contentType.toLowerCase().includes("json")) {
       try { data = JSON.parse(raw); } catch { data = raw; }
     }
     return reply({ ok: upstreamResponse.ok, status: upstreamResponse.status, contentType, data }, upstreamResponse.ok ? 200 : 502);
