@@ -81,7 +81,7 @@ async function handleProxy(req, res) {
   try {
     const baseUrl = new URL(base);
     const rawSegments = Array.isArray(req.params.path) ? req.params.path : [];
-    if (rawSegments.some(part => part === "." || part === ".." || part.includes("/") || part.includes("\\\\") || /[\\u0000-\\u001f]/.test(part))) {
+    if (rawSegments.some(part => part === "." || part === ".." || part.includes("/") || part.includes("\\") || /[\\u0000-\\u001f]/.test(part))) {
       return res.status(400).json({ error: "Invalid path." });
     }
 
