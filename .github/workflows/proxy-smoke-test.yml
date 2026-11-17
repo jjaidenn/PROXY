@@ -1,0 +1,45 @@
+name: Proxy backend smoke tests
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  smoke-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check health and configured services
+        env:
+          API_URL: https://teqctrceotdzzcxynlzb.supabase.co/functions/v1/proxy-api
+          API_KEY: sb_publishable_BIunSLO8Rlq1p0hjKa0FVA_ey5w0oMd
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error "$API_URL/health" -H "apikey: $API_KEY" -o health.json
+          node -e "const x=require('./health.json'); if(!x.ok || x.service!=='proxy-api') process.exit(1); console.log('health: PASS', x)"
+          curl --fail --silent --show-error "$API_URL/targets" -H "apikey: $API_KEY" -o targets.json
+          node -e "const x=require('./targets.json'); for(const n of ['demo-json','countries','weather','cat-facts']) if(!x.targets.includes(n)) throw Error('Missing '+n); console.log('targets: PASS', x.targets.join(', '))"
+      - name: Test demo JSON upstream
+        env:
+          API_URL: https://teqctrceotdzzcxynlzb.supabase.co/functions/v1/proxy-api
+          API_KEY: sb_publishable_BIunSLO8Rlq1p0hjKa0FVA_ey5w0oMd
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error "$API_URL/fetch" -H "apikey: $API_KEY" -H "content-type: application/json" --data '{"target":"demo-json","path":"posts/1"}' -o demo.json
+          node -e "const x=require('./demo.json'); if(!x.ok || x.status!==200 || x.data?.id!==1) throw Error(JSON.stringify(x)); console.log('demo-json: PASS', JSON.stringify(x.data))"
+      - name: Test cat facts upstream
+        env:
+          API_URL: https://teqctrceotdzzcxynlzb.supabase.co/functions/v1/proxy-api
+          API_KEY: sb_publishable_BIunSLO8Rlq1p0hjKa0FVA_ey5w0oMd
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error "$API_URL/fetch" -H "apikey: $API_KEY" -H "content-type: application/json" --data '{"target":"cat-facts","path":"fact"}' -o cats.json
+          node -e "const x=require('./cats.json'); if(!x.ok || x.status!==200 || typeof x.data?.fact!=='string') throw Error(JSON.stringify(x)); console.log('cat-facts: PASS')"
+      - name: Test weather upstream
+        env:
+          API_URL: https://teqctrceotdzzcxynlzb.supabase.co/functions/v1/proxy-api
+          API_KEY: sb_publishable_BIunSLO8Rlq1p0hjKa0FVA_ey5w0wMd
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error "$API_URL/fetch" -H "apikey: $API_KEY" -H "content-type: application/json" --data '{"target":"weather","path":"forecast","query":{"latitude":38.89,"longitude":-77.43,"current":"temperature_2m"}}' -o weather.json
+          node -e "const x=require('./weather.json'); if(!x.ok || x.status!==200 || typeof x.data?.current?.temperature_2m!=='number') throw Error(JSON.stringify(x)); console.log('weather: PASS', x.data.current)"
