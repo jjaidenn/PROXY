@@ -1,53 +1,45 @@
-# PROXY — Service Gateway
+# PROXY — Supabase API Gateway
 
-A small Node.js gateway for APIs and web services you own or are authorized to access. The frontend is served by the backend; its CSS, JavaScript, and SVG brand asset are loaded from jsDelivr.
+A small, read-only gateway for APIs and services you own or are authorized to access.
 
-## What is included
+## Architecture
 
-- Responsive frontend dashboard with backend health status.
-- Configured-service list populated from the backend.
-- Read-only GET endpoint tester.
-- Allowlisted upstreams only — no arbitrary destination URL input.
-- GET and HEAD forwarding only, redirect blocking, request timeout, and basic per-IP rate limiting.
-- Static frontend assets delivered through jsDelivr.
+- **Frontend:** static HTML and CSS/JavaScript assets in this repository.
+- **Asset delivery:** jsDelivr serves the CSS, JavaScript, and SVG files.
+- **Backend:** Supabase Edge Function `proxy-api`.
+- **Upstreams:** fixed HTTPS origins configured by the project operator in Supabase Function Secrets.
 
-## Run locally
+This is an allowlisted API gateway, not a full browser proxy. It does not rewrite arbitrary websites, forward login cookies, or bypass access controls. Only JSON/plain-text API responses are supported; only GET requests are made to upstream services.
 
-Requires Node.js 20 or newer.
+## Supabase setup
 
-```sh
-npm install
-ALLOWED_ORIGINS='{"demo":"https://httpbin.org"}' npm start
-```
+Project URL: `https://teqctrceotdzzcxynlzb.supabase.co`
 
-Open `http://localhost:3000`. Check `/health` for backend status.
+Function URL: `https://teqctrceotdzzcxynlzb.supabase.co/functions/v1/proxy-api`
 
-The `ALLOWED_ORIGINS` value is a JSON object mapping short target names to fixed HTTPS origins. For example:
+Configure the Supabase Edge Function secret `ALLOWED_ORIGINS` as a JSON object mapping short names to fixed HTTPS API origins, for example:
 
 ```json
-{"status-api":"https://api.example.com"}
+{"my-api":"https://api.example.com"}
 ```
 
-The frontend will list `status-api`. Use the request console with a relative path such as `v1/status`; the resulting gateway path is `/p/status-api/v1/status`.
+Do not add private endpoints unless you have an appropriate authentication layer. Do not put secret keys in this repository or in frontend code. The publishable key in `public/assets/app.js` is intended for browser use.
 
-## jsDelivr asset URLs
-
-These files are in this public GitHub repository and are delivered by jsDelivr:
+## jsDelivr assets
 
 - CSS: https://cdn.jsdelivr.net/gh/jjaidenn/PROXY@main/public/assets/app.css
 - JavaScript: https://cdn.jsdelivr.net/gh/jjaidenn/PROXY@main/public/assets/app.js
-- SVG mark: https://cdn.jsdelivr.net/gh/jjaidenn/PROXY@main/public/assets/mark.svg
+- SVG: https://cdn.jsdelivr.net/gh/jjaidenn/PROXY@main/public/assets/mark.svg
 
-The HTML references these CDN URLs directly. The HTML page and API still need to be served by the running Node.js backend so same-origin API requests work.
+The HTML page itself must be served by a static website host. jsDelivr is used for the assets; it does not execute backend code.
 
-## Deploying the backend
+## Limits
 
-jsDelivr is a static CDN; it cannot execute `server.js`. Deploy this repository to a Node.js host that supports Node 20+, set the start command to `npm start`, and configure the `ALLOWED_ORIGINS` environment variable there. Set the host's health-check path to `/health` if it supports health checks.
+- Fixed allowlist only; no user-supplied destination URLs.
+- HTTPS upstreams only.
+- GET-only upstream requests; no login/session forwarding.
+- Redirects are blocked.
+- JSON/plain-text responses only, maximum 500 KB.
+- 10-second upstream timeout and basic per-isolate rate limiting.
 
-Do not put secrets in the frontend or in `ALLOWED_ORIGINS` values. The gateway intentionally does not forward cookies or authorization headers. Do not configure private services unless you add a proper authentication layer first.
-
-## Important limitations
-
-This is an allowlisted API/service gateway, not a full browser proxy. It does not rewrite arbitrary webpages, forward login sessions, or bypass access controls. Only GET and HEAD requests are enabled. The current rate limiter is in-memory and resets when the process restarts; use a shared limiter and authentication before exposing sensitive services publicly.
-
-Only connect services you own or have permission to access.
+Only configure services you own or have permission to access.
