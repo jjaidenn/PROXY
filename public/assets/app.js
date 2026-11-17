@@ -95,7 +95,7 @@ $("#request-form").addEventListener("submit", async (event) => {
       query = JSON.parse(queryText);
       if (!query || Array.isArray(query) || typeof query !== "object") throw new Error();
     } catch {
-      output.textContent = "Query parameters must be a valid JSON object, for example: {\\"latitude\\":38.89,\\"longitude\\":-77.43}";
+      output.textContent = "Query parameters must be a valid JSON object, for example: {\"latitude\":38.89,\"longitude\":-77.43}";
       output.classList.add("error");
       status.textContent = "INVALID QUERY";
       return;
