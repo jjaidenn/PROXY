@@ -34,7 +34,8 @@
       <div class="section-heading"><div><div class="panel-kicker">REQUEST CONSOLE</div><h2>Test an endpoint</h2></div><span class="read-only">GET / HEAD ONLY</span></div>
       <form id="request-form" class="request-form">
         <label>Service<select id="target-select" required><option value="">Choose a configured service</option></select></label>
-        <label>Path <span class="label-hint">relative to the configured service</span><div class="path-wrap"><span>/</span><input id="path-input" type="text" placeholder="v1/status" autocomplete="off" spellcheck="false"></div></label>
+        <label>Path <span class="label-hint">relative API path</span><div class="path-wrap"><span>/</span><input id="path-input" type="text" placeholder="posts/1" autocomplete="off" spellcheck="false"></div></label>
+        <label>Query parameters <span class="label-hint">optional JSON</span><textarea id="query-input" class="query-input" rows="2" placeholder="{&quot;latitude&quot;:38.89,&quot;longitude&quot;:-77.43,&quot;current&quot;:&quot;temperature_2m&quot;}" spellcheck="false"></textarea></label>
         <button type="submit" id="send-button" disabled><span>Send request</span><b>↗</b></button>
       </form>
       <div class="response-head"><span>RESPONSE</span><span id="response-status">WAITING</span></div>
