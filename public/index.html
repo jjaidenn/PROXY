@@ -3,40 +3,44 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#090909">
-  <title>PROXY</title>
-  <style>
-    :root{color-scheme:dark;font-family:Inter,ui-sans-serif,system-ui,sans-serif;background:#090909;color:#f4f4f4}
-    *{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:24px;background:radial-gradient(ellipse at 50% 0,#242424 0,transparent 55%),#090909}
-    main{width:min(680px,100%);border:1px solid #292929;background:#101010eF;border-radius:22px;padding:clamp(24px,6vw,48px);box-shadow:0 24px 90px #0009}
-    .mark{font-size:12px;letter-spacing:.38em;color:#999}.brand{font-size:clamp(42px,10vw,76px);font-weight:850;letter-spacing:-.08em;margin:12px 0 4px}
-    p{color:#a4a4a4;line-height:1.6}.status{display:flex;align-items:center;gap:9px;margin:28px 0 12px;font-size:13px;color:#c8c8c8}
-    .dot{width:8px;height:8px;border-radius:50%;background:#777}.dot.ok{background:#77d69a;box-shadow:0 0 12px #77d69a}
-    .targets{display:grid;gap:9px;margin-top:14px}.target{padding:13px 15px;border:1px solid #292929;border-radius:12px;color:#eee;background:#151515;font-size:14px}
-    code{color:#ddd;background:#202020;padding:2px 6px;border-radius:5px}
-    footer{margin-top:30px;font-size:12px;color:#777}
-  </style>
+  <meta name="theme-color" content="#08090c">
+  <meta name="description" content="A private gateway for configured services.">
+  <title>PROXY — Service Gateway</title>
+  <link rel="icon" href="https://cdn.jsdelivr.net/gh/jjaidenn/PROXY@main/public/assets/mark.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jjaidenn/PROXY@main/public/assets/app.css">
+  <script defer src="https://cdn.jsdelivr.net/gh/jjaidenn/PROXY@main/public/assets/app.js"></script>
 </head>
 <body>
-  <main>
-    <div class="mark">RESTRICTED REVERSE PROXY</div>
-    <div class="brand">PROXY<span style="color:#888">.</span></div>
-    <p>A gateway for services explicitly configured by the operator. This instance does not accept arbitrary destination URLs.</p>
-    <div class="status"><span class="dot" id="dot"></span><span id="status">Checking backend…</span></div>
-    <div class="targets" id="targets"></div>
-    <footer>Only connect services you own or have permission to proxy.</footer>
+  <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
+  <header class="topbar">
+    <a class="wordmark" href="/" aria-label="PROXY home"><img src="https://cdn.jsdelivr.net/gh/jjaidenn/PROXY@main/public/assets/mark.svg" alt=""><span>PROXY</span></a>
+    <div class="top-right"><span class="secure-label"><i></i> CONFIGURED GATEWAY</span><a class="github-link" href="https://github.com/jjaidenn/PROXY" target="_blank" rel="noreferrer">SOURCE ↗</a></div>
+  </header>
+  <main class="shell">
+    <section class="intro">
+      <div class="eyebrow">SERVICE ACCESS / 001</div>
+      <h1>Your services.<br><span>One gateway.</span></h1>
+      <p class="intro-copy">A clean control point for services that have been explicitly configured by the operator.</p>
+    </section>
+    <section class="status-panel panel">
+      <div class="status-left"><span class="pulse" id="status-dot"></span><div><div class="panel-kicker">SYSTEM STATUS</div><strong id="status-text">Connecting to backend…</strong></div></div>
+      <div class="status-meta" id="status-meta">CHECKING</div>
+    </section>
+    <section class="workspace">
+      <div class="section-heading"><div><div class="panel-kicker">AVAILABLE CONNECTIONS</div><h2>Configured services</h2></div><span class="count" id="target-count">—</span></div>
+      <div class="target-grid" id="target-list"><div class="empty-card shimmer">Loading configured services…</div></div>
+    </section>
+    <section class="workspace tester">
+      <div class="section-heading"><div><div class="panel-kicker">REQUEST CONSOLE</div><h2>Test an endpoint</h2></div><span class="read-only">GET / HEAD ONLY</span></div>
+      <form id="request-form" class="request-form">
+        <label>Service<select id="target-select" required><option value="">Choose a configured service</option></select></label>
+        <label>Path <span class="label-hint">relative to the configured service</span><div class="path-wrap"><span>/</span><input id="path-input" type="text" placeholder="v1/status" autocomplete="off" spellcheck="false"></div></label>
+        <button type="submit" id="send-button" disabled><span>Send request</span><b>↗</b></button>
+      </form>
+      <div class="response-head"><span>RESPONSE</span><span id="response-status">WAITING</span></div>
+      <pre class="response-box" id="response-output">Choose a configured service and enter a relative path to test it.</pre>
+    </section>
+    <footer><span>PROXY / SERVICE GATEWAY</span><span>Only use services you own or are authorized to access.</span></footer>
   </main>
-  <script>
-    async function boot(){
-      const status=document.querySelector("#status"),dot=document.querySelector("#dot"),list=document.querySelector("#targets");
-      try{
-        const [health,targetData]=await Promise.all([fetch("/health").then(r=>r.json()),fetch("/api/targets").then(r=>r.json())]);
-        dot.classList.add("ok");status.textContent="Backend online";
-        if(!targetData.targets.length){list.innerHTML='<div class="target">No upstreams configured yet. Set <code>ALLOWED_ORIGINS</code> on the server.</div>';return;}
-        for(const name of targetData.targets){const item=document.createElement("div");item.className="target";item.textContent=name;list.append(item);}
-      }catch{status.textContent="Backend unavailable";list.textContent="The server health check failed.";}
-    }
-    boot();
-  </script>
 </body>
 </html>
