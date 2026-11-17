@@ -1,47 +1,39 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#08090c">
-  <meta name="description" content="A private gateway for configured services.">
-  <title>PROXY — Service Gateway</title>
-  <link rel="icon" href="https://cdn.jsdelivr.net/gh/jjaidenn/PROXY@main/public/assets/mark.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jjaidenn/PROXY@main/public/assets/app.css">
-  <script defer src="https://cdn.jsdelivr.net/gh/jjaidenn/PROXY@main/public/assets/app.js"></script>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#08090c">
+<meta name="description" content="PROXY — a clean web launcher."><title>PROXY</title>
+<style>
+:root{color-scheme:dark;--bg:#08090c;--panel:#11141a;--line:#262c36;--muted:#8992a0;--text:#f3f5f8;--accent:#a7f3d0}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 50% -18%,#26313c 0,transparent 55%),var(--bg);color:var(--text);font:15px system-ui,-apple-system,sans-serif;overflow-x:hidden}
+header{height:68px;border-bottom:1px solid #ffffff12;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(18px,5vw,64px)}
+.brand{display:flex;align-items:center;gap:10px;font-size:14px;font-weight:850;letter-spacing:.24em}.mark{width:25px;height:25px;border:1px solid #a7f3d077;border-radius:8px;display:grid;place-items:center;color:var(--accent);font-size:14px;letter-spacing:0}
+header a{color:#9ca5b2;text-decoration:none;font-size:11px;letter-spacing:.1em}
+main{width:min(850px,calc(100% - 36px));margin:0 auto;padding:clamp(75px,14vh,145px) 0 55px}
+.hero{text-align:center}.eyebrow{font:10px ui-monospace,monospace;letter-spacing:.2em;color:var(--accent)}h1{font-size:clamp(55px,12vw,94px);line-height:1;letter-spacing:-.09em;margin:16px 0 13px;font-weight:850}.sub{color:#929ba8;font-size:14px;margin:0 0 34px}
+.search{display:flex;align-items:center;gap:12px;padding:8px 9px 8px 18px;border:1px solid #343c48;background:#11151c;border-radius:15px;box-shadow:0 16px 60px #0008;max-width:680px;margin:auto;transition:.2s}.search:focus-within{border-color:#a7f3d099;box-shadow:0 0 0 4px #a7f3d010,0 16px 60px #0008}.search svg{width:19px;flex:none;color:#818b99}.search input{flex:1;min-width:0;border:0;outline:0;background:transparent;color:#f4f6f8;font:14px system-ui}.search input::placeholder{color:#697381}.search button{border:0;border-radius:9px;background:var(--accent);color:#09140f;font-weight:750;padding:12px 18px;cursor:pointer}
+.hint{font:10px ui-monospace,monospace;color:#6f7885;margin:13px 0 0}
+.section{max-width:680px;margin:66px auto 0}.section-title{font:10px ui-monospace,monospace;color:#77818e;letter-spacing:.16em;margin-bottom:15px}.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.tile{border:1px solid var(--line);border-radius:13px;background:#101319;padding:18px;text-decoration:none;color:var(--text);display:flex;align-items:center;gap:13px;transition:.18s}.tile:hover{transform:translateY(-3px);border-color:#596575;background:#151a22}.tile-icon{width:39px;height:39px;border:1px solid #343c47;border-radius:11px;display:grid;place-items:center;font-size:17px;font-weight:800}.tile-icon svg{width:19px;height:19px}.tile strong{display:block;font-size:12px}.tile small{display:block;color:#788391;font:9px ui-monospace,monospace;margin-top:4px;letter-spacing:.08em}
+.note{max-width:680px;margin:36px auto 0;color:#697381;font-size:11px;line-height:1.7;text-align:center}
+footer{position:fixed;bottom:0;left:0;right:0;border-top:1px solid #ffffff10;background:#08090ce8;backdrop-filter:blur(12px);padding:14px clamp(18px,5vw,64px);display:flex;justify-content:space-between;color:#68717e;font:9px ui-monospace,monospace;letter-spacing:.1em}
+@media(max-width:560px){main{padding-top:90px}.tiles{grid-template-columns:1fr}.tile{padding:14px}.section{margin-top:48px}.sub{font-size:12px}.search{gap:8px;padding-left:13px}.search button{padding:12px 13px}footer span:last-child{display:none}}
+</style>
 </head>
 <body>
-  <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
-  <header class="topbar">
-    <a class="wordmark" href="/" aria-label="PROXY home"><img src="https://cdn.jsdelivr.net/gh/jjaidenn/PROXY@main/public/assets/mark.svg" alt=""><span>PROXY</span></a>
-    <div class="top-right"><span class="secure-label"><i></i> CONFIGURED GATEWAY</span><a class="github-link" href="https://github.com/jjaidenn/PROXY" target="_blank" rel="noreferrer">SOURCE ↗</a></div>
-  </header>
-  <main class="shell">
-    <section class="intro">
-      <div class="eyebrow">SERVICE ACCESS / 001</div>
-      <h1>Your services.<br><span>One gateway.</span></h1>
-      <p class="intro-copy">A clean control point for services that have been explicitly configured by the operator.</p>
-    </section>
-    <section class="status-panel panel">
-      <div class="status-left"><span class="pulse" id="status-dot"></span><div><div class="panel-kicker">SYSTEM STATUS</div><strong id="status-text">Connecting to backend…</strong></div></div>
-      <div class="status-meta" id="status-meta">CHECKING</div>
-    </section>
-    <section class="workspace">
-      <div class="section-heading"><div><div class="panel-kicker">AVAILABLE CONNECTIONS</div><h2>Configured services</h2></div><span class="count" id="target-count">—</span></div>
-      <div class="target-grid" id="target-list"><div class="empty-card shimmer">Loading configured services…</div></div>
-    </section>
-    <section class="workspace tester">
-      <div class="section-heading"><div><div class="panel-kicker">REQUEST CONSOLE</div><h2>Test an endpoint</h2></div><span class="read-only">GET / HEAD ONLY</span></div>
-      <form id="request-form" class="request-form">
-        <label>Service<select id="target-select" required><option value="">Choose a configured service</option></select></label>
-        <label>Path <span class="label-hint">relative API path</span><div class="path-wrap"><span>/</span><input id="path-input" type="text" placeholder="posts/1" autocomplete="off" spellcheck="false"></div></label>
-        <label>Query parameters <span class="label-hint">optional JSON</span><textarea id="query-input" class="query-input" rows="2" placeholder="{&quot;latitude&quot;:38.89,&quot;longitude&quot;:-77.43,&quot;current&quot;:&quot;temperature_2m&quot;}" spellcheck="false"></textarea></label>
-        <button type="submit" id="send-button" disabled><span>Send request</span><b>↗</b></button>
-      </form>
-      <div class="response-head"><span>RESPONSE</span><span id="response-status">WAITING</span></div>
-      <pre class="response-box" id="response-output">Choose a configured service and enter a relative path to test it.</pre>
-    </section>
-    <footer><span>PROXY / SERVICE GATEWAY</span><span>Only use services you own or are authorized to access.</span></footer>
-  </main>
-</body>
-</html>
+<header><div class="brand"><span class="mark">P</span> PROXY</div><a href="https://github.com/jjaidenn/PROXY" target="_blank" rel="noopener">SOURCE ↗</a></header>
+<main>
+<section class="hero"><div class="eyebrow">A SIMPLE WEB LAUNCHER</div><h1>PROXY</h1><p class="sub">One place to start browsing.</p>
+<form class="search" id="search-form"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m16 16 4 4"/></svg><input id="address" aria-label="Search or enter a website" placeholder="Search the web or enter a website…" autocomplete="off" spellcheck="false" required><button type="submit">GO ↗</button></form><p class="hint">SEARCH WITH DUCKDUCKGO · OPEN WEBSITES IN A NEW TAB</p></section>
+<section class="section"><div class="section-title">QUICK ACCESS</div><div class="tiles">
+<a class="tile" href="https://www.google.com" target="_blank" rel="noopener"><span class="tile-icon">G</span><span><strong>Google</strong><small>SEARCH</small></span></a>
+<a class="tile" href="https://www.wikipedia.org" target="_blank" rel="noopener"><span class="tile-icon">W</span><span><strong>Wikipedia</strong><small>KNOWLEDGE</small></span></a>
+<a class="tile" href="https://chatgpt.com" target="_blank" rel="noopener"><span class="tile-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3.2a5 5 0 0 1 4.8 3.6 4.8 4.8 0 0 1 3.1 6.7 4.9 4.9 0 0 1-3.5 6.1 5 5 0 0 1-8.7-.1 4.8 4.8 0 0 1-3.1-6.7 4.9 4.9 0 0 1 3.5-6.1A5 5 0 0 1 12 3.2Z"/><path d="m8 6.7 8 4.6v5.9M5.7 12.8l8-4.6M8 17.3l8-4.6"/></svg></span><span><strong>ChatGPT</strong><small>ASSISTANT</small></span></a>
+</div></section>
+<p class="note">PROXY is currently a web launcher, not an intermediary proxy. Websites open directly with their normal security, sign-in, and network restrictions. Some websites may not allow embedding in third-party pages.</p>
+</main>
+<footer><span>PROXY / WEB LAUNCHER</span><span>BUILT FOR THE OPEN WEB</span></footer>
+<script>
+const form=document.getElementById('search-form'),input=document.getElementById('address');
+form.addEventListener('submit',e=>{e.preventDefault();const raw=input.value.trim();if(!raw)return;let url;if(/^https?:\/\//i.test(raw)){try{url=new URL(raw);if(!['http:','https:'].includes(url.protocol))throw 0;}catch{alert('Enter a valid http or https address.');return;}}else if(/^(localhost|[\w-]+\.[a-z]{2,})(:\d+)?(\/.*)?$/i.test(raw)){try{url=new URL('https://'+raw)}catch{url=null}}if(url){window.open(url.href,'_blank','noopener,noreferrer')}else{window.open('https://duckduckgo.com/?q='+encodeURIComponent(raw),'_blank','noopener,noreferrer')}});
+</script>
+</body></html>
