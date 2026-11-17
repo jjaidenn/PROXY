@@ -1,4 +1,4 @@
-name: Proxy backend smoke tests
+name: Proxy backend smoke tests # recheck v6 same-origin redirect handling
 
 on:
   push:
