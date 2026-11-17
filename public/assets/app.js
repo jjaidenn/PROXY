@@ -79,6 +79,7 @@ $("#request-form").addEventListener("submit", async (event) => {
   event.preventDefault();
   const target = $("#target-select").value;
   const path = $("#path-input").value.trim();
+  const queryText = $("#query-input").value.trim();
   const output = $("#response-output");
   const status = $("#response-status");
   if (!state.targets.includes(target)) return;
@@ -87,6 +88,18 @@ $("#request-form").addEventListener("submit", async (event) => {
     output.classList.add("error");
     status.textContent = "INVALID PATH";
     return;
+  }
+  let query = {};
+  if (queryText) {
+    try {
+      query = JSON.parse(queryText);
+      if (!query || Array.isArray(query) || typeof query !== "object") throw new Error();
+    } catch {
+      output.textContent = "Query parameters must be a valid JSON object, for example: {\\"latitude\\":38.89,\\"longitude\\":-77.43}";
+      output.classList.add("error");
+      status.textContent = "INVALID QUERY";
+      return;
+    }
   }
   const button = $("#send-button");
   button.disabled = true;
@@ -97,7 +110,7 @@ $("#request-form").addEventListener("submit", async (event) => {
   try {
     const result = await api("/fetch", {
       method: "POST",
-      body: JSON.stringify({ target, path }),
+      body: JSON.stringify({ target, path, query }),
     });
     output.textContent = JSON.stringify(result.data, null, 2).slice(0, 16000);
     status.textContent = "HTTP " + result.status;
