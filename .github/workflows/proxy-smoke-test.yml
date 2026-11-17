@@ -43,3 +43,12 @@ jobs:
           set -euo pipefail
           curl --fail --silent --show-error "$API_URL/fetch" -H "apikey: $API_KEY" -H "content-type: application/json" --data '{"target":"weather","path":"forecast","query":{"latitude":38.89,"longitude":-77.43,"current":"temperature_2m"}}' -o weather.json
           node -e "const x=require('./weather.json'); if(!x.ok || x.status!==200 || typeof x.data?.current?.temperature_2m!=='number') throw Error(JSON.stringify(x)); console.log('weather: PASS', x.data.current)"
+
+      - name: Test countries upstream
+        env:
+          API_URL: https://teqctrceotdzzcxynlzb.supabase.co/functions/v1/proxy-api
+          API_KEY: sb_publishable_BIunSLO8Rlq1p0hjKa0FVA_ey5w0oMd
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error "$API_URL/fetch" -H "apikey: $API_KEY" -H "content-type: application/json" --data '{"target":"countries","path":"alpha/USA"}' -o countries.json
+          node -e "const x=require('./countries.json'); if(!x.ok || x.status!==200 || !Array.isArray(x.data) || x.data[0]?.cca3!=='USA') throw Error(JSON.stringify(x)); console.log('countries: PASS', x.data[0].name.common)"
