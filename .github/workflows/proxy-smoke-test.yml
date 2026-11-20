@@ -3,6 +3,9 @@ name: Proxy backend smoke tests
 on:
   push:
     branches: [main]
+    paths:
+      - "supabase/functions/proxy-api/**"
+      - ".github/workflows/proxy-smoke-test.yml"
   workflow_dispatch:
 
 jobs:
