@@ -1,45 +1,47 @@
-# PROXY — Supabase API Gateway
+# PROXY
 
-A small, read-only gateway for APIs and services you own or are authorized to access.
+A static, same-origin browser workspace with first-party mini-apps and a small Supabase API explorer.
 
-## Architecture
+## Live architecture
 
-- **Frontend:** static HTML and CSS/JavaScript assets in this repository.
-- **Asset delivery:** jsDelivr serves the CSS, JavaScript, and SVG files.
-- **Backend:** Supabase Edge Function `proxy-api`.
-- **Upstreams:** fixed HTTPS origins configured by the project operator in Supabase Function Secrets.
+- **Website:** GitHub Pages serves the contents of `public/`.
+- **Frontend assets:** CSS and JavaScript are loaded from the same GitHub Pages origin.
+- **Internal apps:** `public/apps/` contains first-party pages that open inside PROXY's existing tab view.
+- **API tools:** `public/apps/api/` talks to the Supabase Edge Function at `/functions/v1/proxy-api`.
+- **API backend:** Supabase Edge Function; upstreams are restricted to fixed HTTPS origins configured by the project operator.
 
-This is an allowlisted API gateway, not a full browser proxy. It does not rewrite arbitrary websites, forward login cookies, or bypass access controls. Only JSON/plain-text API responses are supported; only GET requests are made to upstream services.
+There is no Docker deployment or separate Express server in this architecture.
 
-## Supabase setup
+## Browser behavior and limitations
 
-Project URL: `https://teqctrceotdzzcxynlzb.supabase.co`
+The interface provides tabs, per-tab navigation history, address/search handling, and same-tab navigation. First-party apps hosted under `public/apps/` work inside the browser view.
 
-Function URL: `https://teqctrceotdzzcxynlzb.supabase.co/functions/v1/proxy-api`
+External sites can be shown only when they permit framing. Some sites intentionally block iframe embedding; PROXY respects those policies. This project is **not** a general-purpose browser proxy and does not rewrite arbitrary sites, forward login cookies, or bypass network/site access controls.
 
-Configure the Supabase Edge Function secret `ALLOWED_ORIGINS` as a JSON object mapping short names to fixed HTTPS API origins, for example:
+## Internal apps
+
+- `proxy://apps` — app directory
+- `proxy://demo` — demo app
+- `proxy://api` — Supabase API explorer
+
+To add an app, create `public/apps/your-app/index.html` and link it from `public/apps/index.html`.
+
+## Supabase API gateway
+
+Function URL:
+
+`https://teqctrceotdzzcxynlzb.supabase.co/functions/v1/proxy-api`
+
+Configure the Edge Function secret `ALLOWED_ORIGINS` as a JSON object mapping short names to fixed HTTPS API origins, for example:
 
 ```json
 {"my-api":"https://api.example.com"}
 ```
 
-Do not add private endpoints unless you have an appropriate authentication layer. Do not put secret keys in this repository or in frontend code. The publishable key in `public/assets/app.js` is intended for browser use.
+Only configure services you own or are authorized to access. Keep private credentials in Supabase Function Secrets; never put them in frontend code or this repository. The publishable key in `public/assets/app.js` is intended for browser use.
 
-## jsDelivr assets
+Gateway limits include fixed allowlisted origins, GET-only upstream requests, blocked redirects, JSON/plain-text responses, a 500 KB response cap, and a 10-second upstream timeout.
 
-- CSS: https://cdn.jsdelivr.net/gh/jjaidenn/PROXY@main/public/assets/app.css
-- JavaScript: https://cdn.jsdelivr.net/gh/jjaidenn/PROXY@main/public/assets/app.js
-- SVG: https://cdn.jsdelivr.net/gh/jjaidenn/PROXY@main/public/assets/mark.svg
+## Deployment
 
-The HTML page itself must be served by a static website host. jsDelivr is used for the assets; it does not execute backend code.
-
-## Limits
-
-- Fixed allowlist only; no user-supplied destination URLs.
-- HTTPS upstreams only.
-- GET-only upstream requests; no login/session forwarding.
-- Redirects are blocked.
-- JSON/plain-text responses only, maximum 500 KB.
-- 10-second upstream timeout and basic per-isolate rate limiting.
-
-Only configure services you own or have permission to access.
+The GitHub Actions workflow deploys `public/` to GitHub Pages on changes to that directory. The backend smoke-test workflow checks the configured Supabase function and sample upstreams. The weather provider check is best-effort because the external provider can rate-limit or temporarily fail independently of PROXY.
