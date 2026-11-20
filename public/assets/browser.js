@@ -23,8 +23,20 @@
     tab.loadTimer = null;
     tab.hintTimer = null;
   };
-  const showHint = (message) => {
-    hint.textContent = message;
+  const showHint = (message, url = '') => {
+    hint.replaceChildren();
+    const text = document.createElement('span');
+    text.textContent = message;
+    hint.appendChild(text);
+    if (url) {
+      const link = document.createElement('a');
+      link.href = url;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      link.className = 'hint-link';
+      link.textContent = 'Open site separately';
+      hint.appendChild(link);
+    }
     hint.classList.add('show');
   };
   const hideHint = () => hint.classList.remove('show');
@@ -122,7 +134,7 @@
 
       tab.hintTimer = setTimeout(() => {
         if (activeId === id && tab.url) {
-          showHint('The browser received a response, but cannot verify that the page rendered. Some sites restrict iframe viewing or depend on features unavailable in embedded mode.');
+          showHint('The site responded, but may not allow embedded viewing. This is a website limitation, not a loading fix PROXY can force.', tab.url);
           setStatus('EMBED STATUS UNKNOWN');
         }
       }, 5000);
@@ -193,7 +205,7 @@
       tab.loading = false;
       if (activeId === tab.id) {
         setStatus('SLOW OR BLOCKED');
-        showHint('No load response arrived within 30 seconds. The site may be slow, offline, or refusing embedded viewing. PROXY cannot override its restrictions.');
+        showHint('No page response arrived within 30 seconds. The site may be offline, slow, or incompatible with embedded viewing.', tab.url);
       }
     }, 30000);
   }
@@ -255,7 +267,7 @@
       tab.loading = false;
       if (activeId === tab.id) {
         setStatus('SLOW OR BLOCKED');
-        showHint('The reload did not respond within 30 seconds. Check the address or try a site that allows embedded viewing.');
+        showHint('The reload did not respond within 30 seconds. The site may be offline or incompatible with embedded viewing.', tab.url);
       }
     }, 30000);
   });
