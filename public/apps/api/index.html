@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#08090c"><title>API Explorer — PROXY</title>
+<link rel="stylesheet" href="../../assets/app.css">
+</head>
+<body>
+<div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
+<header class="topbar">
+ <a class="wordmark" href="../../"><img src="../../assets/mark.svg" alt=""> PROXY</a>
+ <div class="top-right"><span class="secure-label"><i></i> ALLOWLISTED API WORKSPACE</span><a class="github-link" href="https://github.com/jjaidenn/PROXY">SOURCE</a></div>
+</header>
+<main class="shell">
+ <section class="intro"><div class="eyebrow">PROXY / API TOOLS</div><h1>API <span>Explorer</span></h1><p class="intro-copy">Send read-only requests to services configured by the project owner. Only approved targets and relative paths are accepted.</p></section>
+ <section class="panel status-panel" aria-live="polite"><div class="status-left"><span class="pulse" id="status-dot"></span><div><div class="panel-kicker">CONNECTION</div><strong id="status-text">Checking Supabase…</strong></div></div><span class="status-meta" id="status-meta">CONNECTING</span></section>
+ <section class="workspace"><div class="section-heading"><div><div class="panel-kicker">AVAILABLE UPSTREAMS</div><h2>Configured services</h2></div><span class="count" id="target-count">00</span></div><div class="target-grid" id="target-list"><div class="empty-card shimmer">Loading configured services…</div></div></section>
+ <section class="tester"><div class="section-heading"><div><div class="panel-kicker">REQUEST BUILDER</div><h2>Test an endpoint</h2></div><span class="read-only">READ ONLY</span></div>
+ <form class="request-form" id="request-form">
+  <label>Service<select id="target-select" required><option value="">Loading services…</option></select></label>
+  <label>Relative path<div class="path-wrap"><span>/</span><input id="path-input" placeholder="posts/1" autocomplete="off"></div></label>
+  <label>Query parameters (JSON)<textarea class="query-input" id="query-input" rows="2" placeholder='{"limit":10}'></textarea></label>
+  <button id="send-button" type="submit" disabled><span>Send request</span><b>→</b></button>
+ </form>
+ <div class="response-head"><span>RESPONSE</span><span id="response-status">WAITING</span></div><pre class="response-box" id="response-output">Choose a configured service to begin.</pre>
+ </section>
+ <footer><span>PROXY / SUPABASE EDGE FUNCTION</span><span>Only services you own or are authorized to access.</span></footer>
+</main>
+<script src="../../assets/app.js" defer></script>
+</body></html>
