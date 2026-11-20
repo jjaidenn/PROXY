@@ -99,6 +99,7 @@
     input.value = tab.url || '';
     hideHint();
     clearTimeout(hintTimer);
+    if (tab.embedWarning && tab.url) showHint('If this area is still blank, the site may not support embedded viewing. You can open it in a regular browser tab instead.', tab.url);
     setStatus(tab.loading ? 'LOADING' : tab.url ? 'PAGE OPEN · EMBED STATUS UNKNOWN' : 'READY');
     renderTabs();
     updateControls();
@@ -114,7 +115,7 @@
     // Only grant fullscreen; external pages do not need clipboard access from this workspace.
     frame.allow = 'fullscreen';
     frame.hidden = true;
-    const tab = { id, frame, history: [], index: -1, url: '', loading: false, loadTimer: null, hintTimer: null };
+    const tab = { id, frame, history: [], index: -1, url: '', loading: false, embedWarning: false, loadTimer: null, hintTimer: null };
 
     frame.addEventListener('load', () => {
       tab.loading = false;
@@ -146,6 +147,7 @@
 
       tab.hintTimer = setTimeout(() => {
         if (activeId === id && tab.url) {
+          tab.embedWarning = true;
           showHint('If this area is still blank, the site may not support embedded viewing. You can open it in a regular browser tab instead.', tab.url);
           setStatus('EMBED STATUS UNKNOWN');
         }
@@ -205,6 +207,7 @@
     }
     tab.url = finalUrl;
     tab.loading = true;
+    tab.embedWarning = false;
     input.value = finalUrl;
     home.classList.add('hidden');
     hideHint();
@@ -242,6 +245,7 @@
     clearTimers(tab);
     tab.url = '';
     tab.loading = false;
+    tab.embedWarning = false;
     tab.history = [];
     tab.index = -1;
     tab.frame.src = 'about:blank';
