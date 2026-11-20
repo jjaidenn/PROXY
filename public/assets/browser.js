@@ -1,0 +1,12 @@
+const form=document.getElementById('address-form'),input=document.getElementById('address'),home=document.getElementById('home-screen'),frame=document.getElementById('browser-frame'),error=document.getElementById('frame-error'),status=document.getElementById('status');
+let current='';let hintTimer=0;
+function showHome(){clearTimeout(hintTimer);document.getElementById('frame-hint').classList.remove('show');frame.classList.remove('active');frame.removeAttribute('src');error.classList.remove('show');home.classList.remove('hidden');input.value='';status.textContent='READY';}
+function go(value){let url;try{url=new URL(value);if(!['http:','https:'].includes(url.protocol))throw new Error();}catch{status.textContent='INVALID ADDRESS';return;}
+ current=url.href;clearTimeout(hintTimer);document.getElementById('frame-hint').classList.remove('show');home.classList.add('hidden');error.classList.remove('show');frame.classList.add('active');status.textContent='LOADING';frame.src=current;input.value=current;hintTimer=setTimeout(()=>{document.getElementById('frame-hint').classList.add('show');status.textContent='CHECK PAGE';},5000);}
+form.addEventListener('submit',e=>{e.preventDefault();const raw=input.value.trim();if(!raw)return;const appMatch=raw.match(/^(?:proxy|app):\/\/([a-z0-9-]+)\/?$/i);if(appMatch){const slug=appMatch[1].toLowerCase();go(new URL(slug==='apps'?'./apps/':('./apps/'+slug+'/'),location.href).href);return;}if(raw.startsWith('/apps/')){go(new URL(raw,location.origin).href);return;}const hasScheme=/^https?:\/\//i.test(raw),domain=!/\s/.test(raw)&&raw.includes('.');if(hasScheme||domain){go(hasScheme?raw:'https://'+raw);}else{go('https://duckduckgo.com/?q='+encodeURIComponent(raw));}});
+document.querySelectorAll('[data-url]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();go(a.dataset.url);}));
+document.getElementById('home').addEventListener('click',showHome);
+document.getElementById('back').addEventListener('click',()=>{try{frame.contentWindow.history.back()}catch{}});
+document.getElementById('forward').addEventListener('click',()=>{try{frame.contentWindow.history.forward()}catch{}});
+document.getElementById('reload').addEventListener('click',()=>{if(current){status.textContent='RELOADING';frame.src=current;}});
+frame.addEventListener('load',()=>{if(current){status.textContent='PAGE RESPONSE RECEIVED';clearTimeout(hintTimer);hintTimer=setTimeout(()=>{document.getElementById('frame-hint').classList.add('show');status.textContent='CHECK PAGE';},3500);}});
