@@ -4,12 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#08090c">
-<title>PROXY — Browser</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jjaidenn/PROXY@main/public/assets/browser.css">
+<meta name="description" content="PROXY — a focused in-page workspace for internal apps and permitted embedded content.">
+<title>PROXY — Browser Workspace</title>
+<link rel="stylesheet" href="./assets/browser.css">
 </head>
 <body>
 <header class="top">
- <div class="brand"><span class="mark">P</span> PROXY</div>
+ <a class="brand" href="./" aria-label="PROXY home"><span class="mark">P</span> PROXY</a>
  <div class="nav">
   <button type="button" id="back" aria-label="Back" title="Back">←</button>
   <button type="button" id="forward" aria-label="Forward" title="Forward">→</button>
@@ -27,18 +28,18 @@
 </div>
 <main class="main">
  <section class="home" id="home-screen">
-  <div class="home-kicker">YOUR BROWSER SPACE</div><h1>PROXY</h1><p class="tagline">Search. Browse. Stay in one place.</p>
+  <div class="home-kicker">YOUR BROWSER WORKSPACE</div><h1>PROXY</h1><p class="tagline">Your apps. Your workspace. One place.</p>
   <div class="shortcuts">
-   <a class="shortcut" href="https://www.google.com" data-url="https://www.google.com"><span class="shortcut-icon google-mark">G</span><span><strong>Google</strong><small>SEARCH</small></span></a>
-   <a class="shortcut" href="https://www.wikipedia.org" data-url="https://www.wikipedia.org"><span class="shortcut-icon">W</span><span><strong>Wikipedia</strong><small>KNOWLEDGE</small></span></a>
-   <a class="shortcut" href="https://chatgpt.com" data-url="https://chatgpt.com"><span class="shortcut-icon">✳</span><span><strong>ChatGPT</strong><small>ASSISTANT</small></span></a>
+   <a class="shortcut" href="./apps/" data-url="./apps/"><span class="shortcut-icon">A</span><span><strong>App Library</strong><small>WORKSPACE</small></span></a>
+   <a class="shortcut" href="./apps/demo/" data-url="./apps/demo/"><span class="shortcut-icon">D</span><span><strong>Demo App</strong><small>INTERNAL</small></span></a>
+   <a class="shortcut" href="./apps/api/" data-url="./apps/api/"><span class="shortcut-icon">API</span><span><strong>API Explorer</strong><small>SUPABASE</small></span></a>
   </div>
-  <p class="home-note">Some websites do not allow embedded viewing. PROXY respects those restrictions.</p>
+  <p class="home-note">External sites appear here only when they permit embedding. PROXY does not override website restrictions.</p>
  </section>
  <div class="frame-stage" id="frame-stage"></div>
- <div class="frame-hint" id="frame-hint">This site may block embedded viewing. That restriction cannot be overridden here.</div>
- <div class="bottom"><span>PROXY / IN-PAGE BROWSER</span><span id="status">READY</span></div>
+ <div class="frame-hint" id="frame-hint">This site may block embedded viewing. Its embedding policy is respected.</div>
+ <div class="bottom"><span>PROXY / IN-PAGE WORKSPACE</span><span id="status">READY</span></div>
 </main>
-<script src="https://cdn.jsdelivr.net/gh/jjaidenn/PROXY@main/public/assets/browser.js" defer></script>
+<script src="./assets/browser.js" defer></script>
 </body>
 </html>
