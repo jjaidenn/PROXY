@@ -10,7 +10,7 @@ A static, same-origin browser workspace with first-party mini-apps and a small S
 - **API tools:** `public/apps/api/` talks to the Supabase Edge Function at `/functions/v1/proxy-api`.
 - **API backend:** Supabase Edge Function; upstreams are restricted to fixed HTTPS origins configured by the project operator.
 
-There is no Docker deployment or separate Express server in this architecture.
+There is no Docker deployment or separate Express server in this architecture. No Scramjet, Ultraviolet, or Rammerhead runtime is currently installed or deployed; GitHub Pages serves static files and cannot run a proxy server. Adding a separate engine would require a compatible server host and an authorized use case.
 
 ## Browser behavior and limitations
 
