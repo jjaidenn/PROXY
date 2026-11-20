@@ -74,6 +74,17 @@
       close.addEventListener('click', () => closeTab(tab.id));
       button.append(label);
       button.addEventListener('click', () => activateTab(tab.id));
+      button.addEventListener('keydown', event => {
+        if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+        event.preventDefault();
+        const current = tabs.findIndex(entry => entry.id === tab.id);
+        const next = event.key === 'Home' ? 0
+          : event.key === 'End' ? tabs.length - 1
+          : (current + (event.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length;
+        activateTab(tabs[next].id);
+        const nextButton = strip.querySelectorAll('.tab')[next];
+        if (nextButton) nextButton.focus();
+      });
       item.append(button, close);
       strip.insertBefore(item, $('new-tab'));
     });
@@ -100,7 +111,8 @@
     frame.title = 'PROXY tab ' + id;
     frame.referrerPolicy = 'strict-origin-when-cross-origin';
     frame.loading = 'eager';
-    frame.allow = 'fullscreen; autoplay; clipboard-read; clipboard-write';
+    // Only grant fullscreen; external pages do not need clipboard access from this workspace.
+    frame.allow = 'fullscreen';
     frame.hidden = true;
     const tab = { id, frame, history: [], index: -1, url: '', loading: false, loadTimer: null, hintTimer: null };
 
@@ -134,7 +146,7 @@
 
       tab.hintTimer = setTimeout(() => {
         if (activeId === id && tab.url) {
-          showHint('The site responded, but may not allow embedded viewing. This is a website limitation, not a loading fix PROXY can force.', tab.url);
+          showHint('If this area is still blank, the site may not support embedded viewing. You can open it in a regular browser tab instead.', tab.url);
           setStatus('EMBED STATUS UNKNOWN');
         }
       }, 5000);
