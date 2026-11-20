@@ -1,24 +1,42 @@
 (() => {
-  const form = document.getElementById('address-form');
-  const input = document.getElementById('address');
-  const home = document.getElementById('home-screen');
-  const stage = document.getElementById('frame-stage');
-  const strip = document.getElementById('tab-strip');
-  const status = document.getElementById('status');
-  const hint = document.getElementById('frame-hint');
+  'use strict';
+
+  const $ = id => document.getElementById(id);
+  const form = $('address-form');
+  const input = $('address');
+  const home = $('home-screen');
+  const stage = $('frame-stage');
+  const strip = $('tab-strip');
+  const status = $('status');
+  const hint = $('frame-hint');
   const tabs = [];
   let activeId = null;
   let nextId = 1;
   let hintTimer = null;
 
-  function activeTab() { return tabs.find(tab => tab.id === activeId) || null; }
-  function setStatus(value) { status.textContent = value; }
+  const activeTab = () => tabs.find(tab => tab.id === activeId) || null;
+  const setStatus = value => { status.textContent = value; };
+  const clearTimers = tab => {
+    if (!tab) return;
+    clearTimeout(tab.loadTimer);
+    clearTimeout(tab.hintTimer);
+    tab.loadTimer = null;
+    tab.hintTimer = null;
+  };
+  const showHint = (message) => {
+    hint.textContent = message;
+    hint.classList.add('show');
+  };
+  const hideHint = () => hint.classList.remove('show');
+
   function updateControls() {
     const tab = activeTab();
-    document.getElementById('back').disabled = !tab || tab.index <= 0;
-    document.getElementById('forward').disabled = !tab || tab.index >= tab.history.length - 1;
-    document.getElementById('reload').disabled = !tab || !tab.url;
+    $('back').disabled = !tab || tab.index <= 0;
+    $('forward').disabled = !tab || tab.index >= tab.history.length - 1;
+    $('reload').disabled = !tab || !tab.url;
+    $('home').disabled = !tab;
   }
+
   function renderTabs() {
     strip.querySelectorAll('.tab').forEach(node => node.remove());
     tabs.forEach(tab => {
@@ -30,19 +48,23 @@
       button.title = tab.url || 'New tab';
       const label = document.createElement('span');
       label.className = 'tab-label';
-      label.textContent = tab.url ? (() => { try { return new URL(tab.url).hostname; } catch { return 'Page'; } })() : 'New tab';
+      label.textContent = tab.url ? (() => {
+        try { return new URL(tab.url).hostname; } catch { return 'Page'; }
+      })() : 'New tab';
       const close = document.createElement('span');
       close.className = 'tab-close';
+      close.setAttribute('role', 'button');
       close.setAttribute('aria-label', 'Close tab');
       close.textContent = '×';
       button.append(label, close);
       button.addEventListener('click', event => {
-        if (event.target === close) { closeTab(tab.id); return; }
-        activateTab(tab.id);
+        if (event.target === close) closeTab(tab.id);
+        else activateTab(tab.id);
       });
-      strip.insertBefore(button, document.getElementById('new-tab'));
+      strip.insertBefore(button, $('new-tab'));
     });
   }
+
   function activateTab(id) {
     const tab = tabs.find(item => item.id === id);
     if (!tab) return;
@@ -50,44 +72,73 @@
     tabs.forEach(item => { item.frame.hidden = item.id !== id; });
     home.classList.toggle('hidden', !!tab.url);
     input.value = tab.url || '';
-    hint.classList.remove('show');
+    hideHint();
     clearTimeout(hintTimer);
-    setStatus(tab.url ? 'PAGE OPEN' : 'READY');
+    setStatus(tab.loading ? 'LOADING' : tab.url ? 'PAGE OPEN · EMBED STATUS UNKNOWN' : 'READY');
     renderTabs();
     updateControls();
   }
+
   function createTab() {
     const id = nextId++;
     const frame = document.createElement('iframe');
     frame.className = 'browser-frame';
     frame.title = 'PROXY tab ' + id;
     frame.referrerPolicy = 'strict-origin-when-cross-origin';
+    frame.loading = 'eager';
+    frame.allow = 'fullscreen; autoplay; clipboard-read; clipboard-write';
     frame.hidden = true;
+    const tab = { id, frame, history: [], index: -1, url: '', loading: false, loadTimer: null, hintTimer: null };
+
     frame.addEventListener('load', () => {
-      const tab = tabs.find(item => item.id === id);
-      if (!tab || !tab.url || activeId !== id) return;
-      setStatus('PAGE RESPONSE RECEIVED');
-      clearTimeout(hintTimer);
-      hintTimer = setTimeout(() => {
+      tab.loading = false;
+      clearTimeout(tab.loadTimer);
+      tab.loadTimer = null;
+      if (activeId !== id) return;
+      setStatus('RESPONSE RECEIVED · PAGE VISIBILITY UNVERIFIED');
+      hideHint();
+
+      // Same-origin pages can safely report their final URL and title.
+      // Cross-origin pages remain isolated by the browser's same-origin policy.
+      try {
+        const finalUrl = frame.contentWindow.location.href;
+        if (finalUrl && finalUrl !== 'about:blank' && finalUrl !== tab.url) {
+          tab.url = finalUrl;
+          input.value = finalUrl;
+          if (tab.index >= 0) tab.history[tab.index] = finalUrl;
+          renderTabs();
+        }
+        const pageTitle = frame.contentDocument.title;
+        if (pageTitle) frame.title = pageTitle + ' — PROXY tab ' + id;
+      } catch (_) {
+        // Expected for cross-origin pages.
+      }
+
+      tab.hintTimer = setTimeout(() => {
         if (activeId === id && tab.url) {
-          hint.classList.add('show');
+          showHint('The browser received a response, but cannot verify that the page rendered. Some sites restrict iframe viewing or depend on features unavailable in embedded mode.');
           setStatus('EMBED STATUS UNKNOWN');
         }
-      }, 4500);
+      }, 5000);
     });
+
     stage.appendChild(frame);
-    tabs.push({ id, frame, history: [], index: -1, url: '' });
+    tabs.push(tab);
     activateTab(id);
   }
+
   function closeTab(id) {
     const index = tabs.findIndex(tab => tab.id === id);
     if (index < 0) return;
+    const wasActive = activeId === id;
+    clearTimers(tabs[index]);
     tabs[index].frame.remove();
     tabs.splice(index, 1);
-    if (!tabs.length) { createTab(); return; }
-    if (activeId === id) activateTab(tabs[Math.max(0, index - 1)].id);
+    if (!tabs.length) createTab();
+    else if (wasActive) activateTab(tabs[Math.max(0, index - 1)].id);
     else { renderTabs(); updateControls(); }
   }
+
   function normalizeAddress(raw) {
     const value = raw.trim();
     if (!value) return null;
@@ -101,77 +152,129 @@
     if (!/\s/.test(value) && value.includes('.')) return 'https://' + value;
     return 'https://duckduckgo.com/?q=' + encodeURIComponent(value);
   }
+
   function navigate(value, addHistory = true) {
     const tab = activeTab();
     if (!tab) return;
     let url;
     try {
       url = new URL(value, location.href);
-      if (!['http:', 'https:'].includes(url.protocol)) throw new Error('Unsupported protocol');
-    } catch {
+      if (!['http:', 'https:'].includes(url.protocol) || !url.hostname) throw new Error('Unsupported address');
+    } catch (_) {
       setStatus('INVALID ADDRESS');
+      showHint('Enter a valid website address or search phrase.');
       return;
     }
+
     const finalUrl = url.href;
+    clearTimers(tab);
     if (addHistory) {
       tab.history = tab.history.slice(0, tab.index + 1);
       tab.history.push(finalUrl);
       tab.index = tab.history.length - 1;
     }
     tab.url = finalUrl;
+    tab.loading = true;
     input.value = finalUrl;
     home.classList.add('hidden');
-    hint.classList.remove('show');
-    clearTimeout(hintTimer);
+    hideHint();
     setStatus('LOADING');
     tab.frame.src = finalUrl;
     renderTabs();
     updateControls();
-    hintTimer = setTimeout(() => {
-      if (activeId === tab.id && tab.url) {
-        hint.classList.add('show');
-        setStatus('EMBED STATUS UNKNOWN');
+
+    tab.loadTimer = setTimeout(() => {
+      tab.loading = false;
+      if (activeId === tab.id) {
+        setStatus('SLOW OR BLOCKED');
+        showHint('No load response arrived in time. The site may be slow, offline, or refusing embedded viewing. PROXY cannot override its restrictions.');
       }
-    }, 6500);
+    }, 18000);
   }
+
   form.addEventListener('submit', event => {
     event.preventDefault();
     const url = normalizeAddress(input.value);
     if (url) navigate(url);
   });
+
   document.querySelectorAll('[data-url]').forEach(link => {
     link.addEventListener('click', event => {
       event.preventDefault();
       navigate(link.dataset.url);
     });
   });
-  document.getElementById('new-tab').addEventListener('click', createTab);
-  document.getElementById('home').addEventListener('click', () => {
+
+  $('new-tab').addEventListener('click', createTab);
+  $('home').addEventListener('click', () => {
     const tab = activeTab();
     if (!tab) return;
+    clearTimers(tab);
     tab.url = '';
+    tab.loading = false;
     tab.history = [];
     tab.index = -1;
-    tab.frame.removeAttribute('src');
+    tab.frame.src = 'about:blank';
     input.value = '';
     home.classList.remove('hidden');
-    hint.classList.remove('show');
-    clearTimeout(hintTimer);
+    hideHint();
     setStatus('READY');
     renderTabs();
     updateControls();
   });
-  document.getElementById('back').addEventListener('click', () => {
+
+  $('back').addEventListener('click', () => {
     const tab = activeTab();
-    if (tab && tab.index > 0) { tab.index--; navigate(tab.history[tab.index], false); }
+    if (tab && tab.index > 0) {
+      tab.index--;
+      navigate(tab.history[tab.index], false);
+    }
   });
-  document.getElementById('forward').addEventListener('click', () => {
+  $('forward').addEventListener('click', () => {
     const tab = activeTab();
-    if (tab && tab.index < tab.history.length - 1) { tab.index++; navigate(tab.history[tab.index], false); }
+    if (tab && tab.index < tab.history.length - 1) {
+      tab.index++;
+      navigate(tab.history[tab.index], false);
+    }
   });
-  document.getElementById('reload').addEventListener('click', () => {
+  $('reload').addEventListener('click', () => {
     const tab = activeTab();
-    if (tab && tab.url) { setStatus('RELOADING'); tab.frame.src = tab.url; }
+    if (!tab || !tab.url) return;
+    clearTimers(tab);
+    tab.loading = true;
+    hideHint();
+    setStatus('RELOADING');
+    tab.frame.src = tab.url;
+    tab.loadTimer = setTimeout(() => {
+      tab.loading = false;
+      if (activeId === tab.id) {
+        setStatus('SLOW OR BLOCKED');
+        showHint('The reload did not respond in time. Check the address or try a site that allows embedded viewing.');
+      }
+    }, 18000);
   });
+
+  // Desktop keyboard shortcuts; normal typing in the address field is untouched.
+  document.addEventListener('keydown', event => {
+    const modifier = event.ctrlKey || event.metaKey;
+    if (modifier && event.key.toLowerCase() === 'l') {
+      event.preventDefault();
+      input.focus();
+      input.select();
+    } else if (modifier && event.key.toLowerCase() === 't') {
+      event.preventDefault();
+      createTab();
+    } else if (modifier && event.key.toLowerCase() === 'w') {
+      event.preventDefault();
+      if (tabs.length > 1) closeTab(activeId);
+    } else if (event.altKey && event.key === 'ArrowLeft') {
+      event.preventDefault();
+      $('back').click();
+    } else if (event.altKey && event.key === 'ArrowRight') {
+      event.preventDefault();
+      $('forward').click();
+    }
+  });
+
   createTab();
 })();
