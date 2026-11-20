@@ -1,31 +1,42 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#08090c">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#08090c">
 <title>PROXY — Browser</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jjaidenn/PROXY@main/public/assets/browser.css">
 </head>
 <body>
 <header class="top">
  <div class="brand"><span class="mark">P</span> PROXY</div>
- <div class="nav"><button type="button" id="back" aria-label="Back">←</button><button type="button" id="forward" aria-label="Forward">→</button><button type="button" id="reload" aria-label="Reload">↻</button><button type="button" id="home" aria-label="Home">⌂</button></div>
+ <div class="nav">
+  <button type="button" id="back" aria-label="Back" title="Back">←</button>
+  <button type="button" id="forward" aria-label="Forward" title="Forward">→</button>
+  <button type="button" id="reload" aria-label="Reload" title="Reload">↻</button>
+  <button type="button" id="home" aria-label="Home" title="Home">⌂</button>
+ </div>
  <form class="address-form" id="address-form">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m16 16 4 4"/></svg>
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m16 16 4 4"/></svg>
   <input id="address" aria-label="Search or enter website" placeholder="Search or enter a website address…" autocomplete="off" spellcheck="false" required>
   <button type="submit">GO</button>
  </form>
 </header>
+<div class="tab-strip" id="tab-strip" role="tablist" aria-label="Browser tabs">
+ <button class="new-tab" id="new-tab" type="button" aria-label="New tab" title="New tab">+</button>
+</div>
 <main class="main">
  <section class="home" id="home-screen">
   <div class="home-kicker">YOUR BROWSER SPACE</div><h1>PROXY</h1><p class="tagline">Search. Browse. Stay in one place.</p>
   <div class="shortcuts">
-   <a class="shortcut" href="https://www.google.com" data-url="https://www.google.com"><span class="shortcut-icon">G</span><span><strong>Google</strong><small>SEARCH</small></span></a>
+   <a class="shortcut" href="https://www.google.com" data-url="https://www.google.com"><span class="shortcut-icon google-mark">G</span><span><strong>Google</strong><small>SEARCH</small></span></a>
    <a class="shortcut" href="https://www.wikipedia.org" data-url="https://www.wikipedia.org"><span class="shortcut-icon">W</span><span><strong>Wikipedia</strong><small>KNOWLEDGE</small></span></a>
    <a class="shortcut" href="https://chatgpt.com" data-url="https://chatgpt.com"><span class="shortcut-icon">✳</span><span><strong>ChatGPT</strong><small>ASSISTANT</small></span></a>
   </div>
+  <p class="home-note">Some websites do not allow embedded viewing. PROXY respects those restrictions.</p>
  </section>
- <iframe class="frame" id="browser-frame" title="PROXY browser" referrerpolicy="strict-origin-when-cross-origin"></iframe>
- <div class="frame-hint" id="frame-hint">If this area stays blank, the website may block embedded viewing.</div>\n <section class="frame-error" id="frame-error" role="status"><div class="error-card"><div class="error-icon">!</div><h2>This site won't display here</h2><p>The website blocks being shown inside another page, or requires browser features this embedded view cannot provide. PROXY won't bypass the site's security rules. Try another site that supports embedding.</p></div></section>
+ <div class="frame-stage" id="frame-stage"></div>
+ <div class="frame-hint" id="frame-hint">This site may block embedded viewing. That restriction cannot be overridden here.</div>
  <div class="bottom"><span>PROXY / IN-PAGE BROWSER</span><span id="status">READY</span></div>
 </main>
 <script src="https://cdn.jsdelivr.net/gh/jjaidenn/PROXY@main/public/assets/browser.js" defer></script>
