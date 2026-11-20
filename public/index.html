@@ -2,49 +2,55 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#08090c">
-<meta name="description" content="PROXY — a clean web launcher."><title>PROXY</title>
+<title>PROXY — Browser</title>
 <style>
-:root{color-scheme:dark;--bg:#08090c;--panel:#11141a;--line:#262c36;--muted:#8992a0;--text:#f3f5f8;--accent:#a7f3d0}
-*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 50% -18%,#26313c 0,transparent 55%),var(--bg);color:var(--text);font:15px system-ui,-apple-system,sans-serif;overflow-x:hidden}
-header{height:68px;border-bottom:1px solid #ffffff12;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(18px,5vw,64px)}
-.brand{display:flex;align-items:center;gap:10px;font-size:14px;font-weight:850;letter-spacing:.24em}.mark{width:25px;height:25px;border:1px solid #a7f3d077;border-radius:8px;display:grid;place-items:center;color:var(--accent);font-size:14px;letter-spacing:0}
-header a{color:#9ca5b2;text-decoration:none;font-size:11px;letter-spacing:.1em}
-main{width:min(850px,calc(100% - 36px));margin:0 auto;padding:clamp(75px,14vh,145px) 0 55px}
-.hero{text-align:center}.eyebrow{font:10px ui-monospace,monospace;letter-spacing:.2em;color:var(--accent)}h1{font-size:clamp(55px,12vw,94px);line-height:1;letter-spacing:-.09em;margin:16px 0 13px;font-weight:850}.sub{color:#929ba8;font-size:14px;margin:0 0 34px}
-.search{display:flex;align-items:center;gap:12px;padding:8px 9px 8px 18px;border:1px solid #343c48;background:#11151c;border-radius:15px;box-shadow:0 16px 60px #0008;max-width:680px;margin:auto;transition:.2s}.search:focus-within{border-color:#a7f3d099;box-shadow:0 0 0 4px #a7f3d010,0 16px 60px #0008}.search svg{width:19px;flex:none;color:#818b99}.search input{flex:1;min-width:0;border:0;outline:0;background:transparent;color:#f4f6f8;font:14px system-ui}.search input::placeholder{color:#697381}.search button{border:0;border-radius:9px;background:var(--accent);color:#09140f;font-weight:750;padding:12px 18px;cursor:pointer}
-.hint{font:10px ui-monospace,monospace;color:#6f7885;margin:13px 0 0}
-.section{max-width:680px;margin:66px auto 0}.section-title{font:10px ui-monospace,monospace;color:#77818e;letter-spacing:.16em;margin-bottom:15px}.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.tile{border:1px solid var(--line);border-radius:13px;background:#101319;padding:18px;text-decoration:none;color:var(--text);display:flex;align-items:center;gap:13px;transition:.18s}.tile:hover{transform:translateY(-3px);border-color:#596575;background:#151a22}.tile-icon{width:39px;height:39px;border:1px solid #343c47;border-radius:11px;display:grid;place-items:center;font-size:17px;font-weight:800}.tile-icon svg{width:19px;height:19px}.tile strong{display:block;font-size:12px}.tile small{display:block;color:#788391;font:9px ui-monospace,monospace;margin-top:4px;letter-spacing:.08em}
-.browser{display:none;max-width:850px;margin:34px auto 0;border:1px solid var(--line);border-radius:15px;overflow:hidden;background:#0d1015;box-shadow:0 20px 70px #0008}.browser.active{display:block}.browser-bar{display:flex;align-items:center;gap:8px;padding:10px;border-bottom:1px solid var(--line);background:#12161d}.browser-bar button{border:1px solid #303844;background:#1a2029;color:#dce2e9;border-radius:8px;padding:8px 11px;cursor:pointer}.browser-bar button:hover{border-color:#a7f3d077}.browser-address{flex:1;min-width:0;color:#9da8b5;font:11px ui-monospace,monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0 8px}.browser-frame{display:block;width:100%;height:min(68vh,720px);min-height:420px;border:0;background:#fff}.browser-help{padding:10px 14px;color:#8c97a5;font-size:11px;border-top:1px solid var(--line);line-height:1.6}.browser-help button{border:0;background:transparent;color:var(--accent);font:inherit;text-decoration:underline;cursor:pointer;padding:0}.note{max-width:680px;margin:36px auto 0;color:#697381;font-size:11px;line-height:1.7;text-align:center}
-footer{position:fixed;bottom:0;left:0;right:0;border-top:1px solid #ffffff10;background:#08090ce8;backdrop-filter:blur(12px);padding:14px clamp(18px,5vw,64px);display:flex;justify-content:space-between;color:#68717e;font:9px ui-monospace,monospace;letter-spacing:.1em}
-@media(max-width:560px){main{padding-top:90px}.tiles{grid-template-columns:1fr}.tile{padding:14px}.section{margin-top:48px}.sub{font-size:12px}.search{gap:8px;padding-left:13px}.search button{padding:12px 13px}footer span:last-child{display:none}}
+:root{color-scheme:dark;--bg:#080a0e;--panel:#11151c;--line:#272f3a;--muted:#8994a3;--text:#f2f5f8;--accent:#a7f3d0}
+*{box-sizing:border-box}html,body{height:100%;margin:0}body{background:var(--bg);color:var(--text);font:14px system-ui,-apple-system,sans-serif;overflow:hidden}
+.top{height:68px;display:flex;align-items:center;gap:18px;padding:0 20px;border-bottom:1px solid #ffffff12;background:#0c0f14}
+.brand{display:flex;align-items:center;gap:10px;min-width:142px;font-size:14px;font-weight:850;letter-spacing:.22em}.mark{width:27px;height:27px;border:1px solid #a7f3d077;border-radius:8px;display:grid;place-items:center;color:var(--accent);letter-spacing:0}
+.nav{display:flex;gap:6px}.nav button{width:34px;height:34px;border:1px solid var(--line);border-radius:9px;background:#151a22;color:#dce3eb;font-size:17px;cursor:pointer}.nav button:hover{border-color:#a7f3d088}
+.address-form{height:42px;display:flex;align-items:center;gap:10px;flex:1;max-width:950px;margin:auto;padding:0 7px 0 14px;border:1px solid #303946;border-radius:11px;background:#141922}.address-form:focus-within{border-color:#a7f3d099;box-shadow:0 0 0 3px #a7f3d010}.address-form svg{width:17px;color:#84909f;flex:none}.address-form input{flex:1;min-width:0;border:0;outline:0;background:transparent;color:var(--text);font:13px system-ui}.address-form input::placeholder{color:#737f8e}.address-form button{height:30px;padding:0 13px;border:0;border-radius:7px;background:var(--accent);color:#0a1712;font-weight:800;font-size:11px;cursor:pointer}
+.main{height:calc(100% - 68px);position:relative}.home{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px 20px 70px;background:radial-gradient(ellipse at 50% 35%,#1a2930 0,transparent 48%),#090c11}.home.hidden{display:none}.home-kicker{font:10px ui-monospace,monospace;letter-spacing:.24em;color:var(--accent)}h1{font-size:clamp(65px,13vw,112px);line-height:1;letter-spacing:-.1em;margin:18px 0 12px;font-weight:900}.tagline{margin:0;color:#909baa;font-size:14px}.shortcuts{display:grid;grid-template-columns:repeat(3,minmax(130px,170px));gap:12px;margin-top:45px}.shortcut{display:flex;align-items:center;gap:12px;padding:15px;border:1px solid var(--line);border-radius:12px;background:#11161d;color:var(--text);text-decoration:none;transition:.18s}.shortcut:hover{transform:translateY(-3px);border-color:#687687;background:#171e27}.shortcut-icon{width:35px;height:35px;display:grid;place-items:center;border:1px solid #37414e;border-radius:10px;font-weight:850;font-size:16px}.shortcut strong{display:block;font-size:12px}.shortcut small{display:block;margin-top:3px;color:#7f8b99;font:9px ui-monospace,monospace;letter-spacing:.1em}
+.frame{display:none;width:100%;height:100%;border:0;background:#fff}.frame.active{display:block}.frame-error{display:none;position:absolute;inset:0;align-items:center;justify-content:center;text-align:center;padding:28px;background:#0c1016}.frame-error.show{display:flex}.error-card{max-width:440px}.error-icon{width:46px;height:46px;margin:0 auto 18px;border:1px solid #566273;border-radius:14px;display:grid;place-items:center;color:var(--accent);font-size:20px}.error-card h2{font-size:19px;margin:0 0 10px}.error-card p{font-size:13px;line-height:1.7;color:#929eac;margin:0}.bottom{position:absolute;bottom:0;left:0;right:0;height:29px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;background:#0b0e13eF;border-top:1px solid #ffffff0c;color:#687483;font:9px ui-monospace,monospace;letter-spacing:.1em;pointer-events:none}
+@media(max-width:620px){.top{height:auto;min-height:64px;padding:10px;gap:8px;flex-wrap:wrap}.brand{min-width:unset;font-size:12px}.nav{gap:4px}.nav button{width:30px;height:32px}.address-form{order:3;flex-basis:100%;max-width:none}.main{height:calc(100% - 112px)}.shortcuts{grid-template-columns:1fr;width:min(100%,300px);margin-top:32px}.shortcut{padding:12px}.home{padding-bottom:35px}.bottom span:last-child{display:none}}
 </style>
 </head>
 <body>
-<header><div class="brand"><span class="mark">P</span> PROXY</div><a href="https://github.com/jjaidenn/PROXY" target="_blank" rel="noopener">SOURCE ↗</a></header>
-<main>
-<section class="hero"><div class="eyebrow">A SIMPLE WEB LAUNCHER</div><h1>PROXY</h1><p class="sub">One place to start browsing.</p>
-<form class="search" id="search-form"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m16 16 4 4"/></svg><input id="address" aria-label="Search or enter a website" placeholder="Search the web or enter a website…" autocomplete="off" spellcheck="false" required><button type="submit">GO ↗</button></form><p class="hint">SEARCH WITH DUCKDUCKGO · OPEN SITES IN THIS PAGE</p></section>
-<section class="browser" id="browser"><div class="browser-bar"><button type="button" id="back" aria-label="Back">←</button><button type="button" id="forward" aria-label="Forward">→</button><button type="button" id="reload" aria-label="Reload">↻</button><div class="browser-address" id="browser-address">Ready to browse</div><button type="button" id="direct">Open directly</button></div><iframe class="browser-frame" id="browser-frame" title="PROXY in-page browser" referrerpolicy="strict-origin-when-cross-origin"></iframe><div class="browser-help">If a website refuses to display inside this frame, use <button type="button" id="direct-link">open directly in this tab</button>. Some sites block embedding by design.</div></section>
-<section class="section"><div class="section-title">QUICK ACCESS</div><div class="tiles">
-<a class="tile" href="https://www.google.com" data-site="https://www.google.com"><span class="tile-icon">G</span><span><strong>Google</strong><small>SEARCH</small></span></a>
-<a class="tile" href="https://www.wikipedia.org" data-site="https://www.wikipedia.org"><span class="tile-icon">W</span><span><strong>Wikipedia</strong><small>KNOWLEDGE</small></span></a>
-<a class="tile" href="https://chatgpt.com" data-site="https://chatgpt.com"><span class="tile-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3.2a5 5 0 0 1 4.8 3.6 4.8 4.8 0 0 1 3.1 6.7 4.9 4.9 0 0 1-3.5 6.1 5 5 0 0 1-8.7-.1 4.8 4.8 0 0 1-3.1-6.7 4.9 4.9 0 0 1 3.5-6.1A5 5 0 0 1 12 3.2Z"/><path d="m8 6.7 8 4.6v5.9M5.7 12.8l8-4.6M8 17.3l8-4.6"/></svg></span><span><strong>ChatGPT</strong><small>ASSISTANT</small></span></a>
-</div></section>
-<p class="note">PROXY is currently a web launcher, not an intermediary proxy. Websites open directly with their normal security, sign-in, and network restrictions. Some websites may not allow embedding in third-party pages.</p>
+<header class="top">
+ <div class="brand"><span class="mark">P</span> PROXY</div>
+ <div class="nav"><button type="button" id="back" aria-label="Back">←</button><button type="button" id="forward" aria-label="Forward">→</button><button type="button" id="reload" aria-label="Reload">↻</button><button type="button" id="home" aria-label="Home">⌂</button></div>
+ <form class="address-form" id="address-form">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m16 16 4 4"/></svg>
+  <input id="address" aria-label="Search or enter website" placeholder="Search or enter a website address…" autocomplete="off" spellcheck="false" required>
+  <button type="submit">GO</button>
+ </form>
+</header>
+<main class="main">
+ <section class="home" id="home-screen">
+  <div class="home-kicker">YOUR BROWSER SPACE</div><h1>PROXY</h1><p class="tagline">Search. Browse. Stay in one place.</p>
+  <div class="shortcuts">
+   <a class="shortcut" href="https://www.google.com" data-url="https://www.google.com"><span class="shortcut-icon">G</span><span><strong>Google</strong><small>SEARCH</small></span></a>
+   <a class="shortcut" href="https://www.wikipedia.org" data-url="https://www.wikipedia.org"><span class="shortcut-icon">W</span><span><strong>Wikipedia</strong><small>KNOWLEDGE</small></span></a>
+   <a class="shortcut" href="https://chatgpt.com" data-url="https://chatgpt.com"><span class="shortcut-icon">✳</span><span><strong>ChatGPT</strong><small>ASSISTANT</small></span></a>
+  </div>
+ </section>
+ <iframe class="frame" id="browser-frame" title="PROXY browser" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+ <section class="frame-error" id="frame-error" role="status"><div class="error-card"><div class="error-icon">!</div><h2>This site won't display here</h2><p>The website blocks being shown inside another page, or requires browser features this embedded view cannot provide. PROXY won't bypass the site's security rules. Try another site that supports embedding.</p></div></section>
+ <div class="bottom"><span>PROXY / IN-PAGE BROWSER</span><span id="status">READY</span></div>
 </main>
-<footer><span>PROXY / WEB LAUNCHER</span><span>BUILT FOR THE OPEN WEB</span></footer>
 <script>
-const form=document.getElementById('search-form'),input=document.getElementById('address');
-const browser=document.getElementById('browser'),frame=document.getElementById('browser-frame'),addressLabel=document.getElementById('browser-address');
-let currentUrl='';
-function navigate(value){let url;try{url=new URL(value);if(!['http:','https:'].includes(url.protocol))throw new Error();}catch{alert('Enter a valid http or https address.');return;}currentUrl=url.href;addressLabel.textContent=currentUrl;browser.classList.add('active');frame.src=currentUrl;browser.scrollIntoView({behavior:'smooth',block:'start'});}
-form.addEventListener('submit',e=>{e.preventDefault();const raw=input.value.trim();if(!raw)return;let url=null;const hasScheme=raw.startsWith('https://')||raw.startsWith('http://');const looksLikeDomain=!raw.includes(' ')&&raw.includes('.');if(hasScheme||looksLikeDomain){try{url=new URL(hasScheme?raw:'https://'+raw);if(!['http:','https:'].includes(url.protocol))url=null;}catch{url=null;}}if(url)navigate(url.href);else navigate('https://duckduckgo.com/?q='+encodeURIComponent(raw));});
-document.querySelectorAll('[data-site]').forEach(link=>link.addEventListener('click',e=>{e.preventDefault();navigate(link.dataset.site);}));
+const form=document.getElementById('address-form'),input=document.getElementById('address'),home=document.getElementById('home-screen'),frame=document.getElementById('browser-frame'),error=document.getElementById('frame-error'),status=document.getElementById('status');
+let current='';
+function showHome(){frame.classList.remove('active');frame.removeAttribute('src');error.classList.remove('show');home.classList.remove('hidden');input.value='';status.textContent='READY';}
+function go(value){let url;try{url=new URL(value);if(!['http:','https:'].includes(url.protocol))throw new Error();}catch{status.textContent='INVALID ADDRESS';return;}
+ current=url.href;home.classList.add('hidden');error.classList.remove('show');frame.classList.add('active');status.textContent='LOADING';frame.src=current;input.value=current;}
+form.addEventListener('submit',e=>{e.preventDefault();const raw=input.value.trim();if(!raw)return;const hasScheme=/^https?:\/\//i.test(raw),domain=!/\s/.test(raw)&&raw.includes('.');if(hasScheme||domain){go(hasScheme?raw:'https://'+raw);}else{go('https://duckduckgo.com/?q='+encodeURIComponent(raw));}});
+document.querySelectorAll('[data-url]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();go(a.dataset.url);}));
+document.getElementById('home').addEventListener('click',showHome);
 document.getElementById('back').addEventListener('click',()=>{try{frame.contentWindow.history.back()}catch{}});
 document.getElementById('forward').addEventListener('click',()=>{try{frame.contentWindow.history.forward()}catch{}});
-document.getElementById('reload').addEventListener('click',()=>{try{frame.contentWindow.location.reload()}catch{frame.src=currentUrl}});
-function openDirect(){if(currentUrl)window.location.assign(currentUrl);}
-document.getElementById('direct').addEventListener('click',openDirect);
-document.getElementById('direct-link').addEventListener('click',openDirect);
+document.getElementById('reload').addEventListener('click',()=>{if(current){status.textContent='RELOADING';frame.src=current;}});
+frame.addEventListener('load',()=>{if(current)status.textContent='PAGE LOADED';});
 </script>
-</body></html>
+</body>
+</html>
