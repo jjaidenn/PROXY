@@ -106,7 +106,7 @@
     if (!tab) return;
     let url;
     try {
-      url = new URL(value);
+      url = new URL(value, location.href);
       if (!['http:', 'https:'].includes(url.protocol)) throw new Error('Unsupported protocol');
     } catch {
       setStatus('INVALID ADDRESS');
