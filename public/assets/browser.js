@@ -125,9 +125,10 @@
         if (activeId === id) setStatus('READY');
         return;
       }
-      if (activeId !== id) return;
-      setStatus('RESPONSE RECEIVED · PAGE VISIBILITY UNVERIFIED');
-      hideHint();
+      if (activeId === id) {
+        setStatus('RESPONSE RECEIVED · PAGE VISIBILITY UNVERIFIED');
+        hideHint();
+      }
 
       // Same-origin pages can safely report their final URL and title.
       // Cross-origin pages remain isolated by the browser's same-origin policy.
@@ -135,7 +136,7 @@
         const finalUrl = frame.contentWindow.location.href;
         if (finalUrl && finalUrl !== 'about:blank' && finalUrl !== tab.url) {
           tab.url = finalUrl;
-          input.value = finalUrl;
+          if (activeId === id) input.value = finalUrl;
           if (tab.index >= 0) tab.history[tab.index] = finalUrl;
           renderTabs();
         }
@@ -146,8 +147,9 @@
       }
 
       tab.hintTimer = setTimeout(() => {
-        if (activeId === id && tab.url) {
-          tab.embedWarning = true;
+        if (!tab.url) return;
+        tab.embedWarning = true;
+        if (activeId === id) {
           showHint('If this area is still blank, the site may not support embedded viewing. You can open it in a regular browser tab instead.', tab.url);
           setStatus('EMBED STATUS UNKNOWN');
         }
