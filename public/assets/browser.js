@@ -51,16 +51,18 @@
       label.textContent = tab.url ? (() => {
         try { return new URL(tab.url).hostname; } catch { return 'Page'; }
       })() : 'New tab';
-      const close = document.createElement('span');
+      const close = document.createElement('button');
+      close.type = 'button';
       close.className = 'tab-close';
-      close.setAttribute('role', 'button');
-      close.setAttribute('aria-label', 'Close tab');
+      close.setAttribute('aria-label', 'Close ' + (tab.url || 'new') + ' tab');
+      close.title = 'Close tab';
       close.textContent = '×';
-      button.append(label, close);
-      button.addEventListener('click', event => {
-        if (event.target === close) closeTab(tab.id);
-        else activateTab(tab.id);
+      close.addEventListener('click', event => {
+        event.stopPropagation();
+        closeTab(tab.id);
       });
+      button.append(label, close);
+      button.addEventListener('click', () => activateTab(tab.id));
       strip.insertBefore(button, $('new-tab'));
     });
   }
@@ -94,6 +96,10 @@
       tab.loading = false;
       clearTimeout(tab.loadTimer);
       tab.loadTimer = null;
+      if (!tab.url) {
+        if (activeId === id) setStatus('READY');
+        return;
+      }
       if (activeId !== id) return;
       setStatus('RESPONSE RECEIVED · PAGE VISIBILITY UNVERIFIED');
       hideHint();
@@ -187,9 +193,9 @@
       tab.loading = false;
       if (activeId === tab.id) {
         setStatus('SLOW OR BLOCKED');
-        showHint('No load response arrived in time. The site may be slow, offline, or refusing embedded viewing. PROXY cannot override its restrictions.');
+        showHint('No load response arrived within 30 seconds. The site may be slow, offline, or refusing embedded viewing. PROXY cannot override its restrictions.');
       }
-    }, 18000);
+    }, 30000);
   }
 
   form.addEventListener('submit', event => {
@@ -249,9 +255,9 @@
       tab.loading = false;
       if (activeId === tab.id) {
         setStatus('SLOW OR BLOCKED');
-        showHint('The reload did not respond in time. Check the address or try a site that allows embedded viewing.');
+        showHint('The reload did not respond within 30 seconds. Check the address or try a site that allows embedded viewing.');
       }
-    }, 18000);
+    }, 30000);
   });
 
   // Desktop keyboard shortcuts; normal typing in the address field is untouched.
