@@ -38,8 +38,10 @@
   }
 
   function renderTabs() {
-    strip.querySelectorAll('.tab').forEach(node => node.remove());
+    strip.querySelectorAll('.tab-item').forEach(node => node.remove());
     tabs.forEach(tab => {
+      const item = document.createElement('div');
+      item.className = 'tab-item';
       const button = document.createElement('button');
       button.type = 'button';
       button.className = 'tab' + (tab.id === activeId ? ' active' : '');
@@ -57,13 +59,11 @@
       close.setAttribute('aria-label', 'Close ' + (tab.url || 'new') + ' tab');
       close.title = 'Close tab';
       close.textContent = '×';
-      close.addEventListener('click', event => {
-        event.stopPropagation();
-        closeTab(tab.id);
-      });
-      button.append(label, close);
+      close.addEventListener('click', () => closeTab(tab.id));
+      button.append(label);
       button.addEventListener('click', () => activateTab(tab.id));
-      strip.insertBefore(button, $('new-tab'));
+      item.append(button, close);
+      strip.insertBefore(item, $('new-tab'));
     });
   }
 
